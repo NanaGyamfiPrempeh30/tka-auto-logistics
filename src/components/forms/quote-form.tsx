@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { contact } from "@/lib/constants";
+import { createClient } from "@/lib/supabase/client";
 
 type QuoteData = {
   need: "source" | "ship" | "";
@@ -44,6 +45,8 @@ function labelClasses() {
 export default function QuoteForm() {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [data, setData] = useState<QuoteData>(initialData);
 
   const update = (patch: Partial<QuoteData>) => setData((d) => ({ ...d, ...patch }));
@@ -56,8 +59,37 @@ export default function QuoteForm() {
     return true;
   };
 
-  const handleSubmit = () => {
-    if (!canProceed()) return;
+  const handleSubmit = async () => {
+    if (!canProceed() || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+
+    const needLabel = data.need === "source" ? "Source a car" : "Ship a car I already bought";
+    const vehicleInterest = [
+      `${needLabel}: ${data.year} ${data.make} ${data.model}`.trim(),
+      data.auctionSite && `auction: ${data.auctionSite}`,
+      data.vin && `VIN ${data.vin}`,
+    ]
+      .filter(Boolean)
+      .join(" — ");
+
+    const supabase = createClient();
+    const { error } = await supabase.from("leads").insert({
+      name: data.name,
+      contact: `${data.phone} / ${data.email}`,
+      vehicle_interest: vehicleInterest,
+      ghana_city: data.ghanaCity,
+    });
+
+    setSubmitting(false);
+
+    if (error) {
+      setSubmitError(
+        "Something went wrong sending your request. Your answers are still here — try again, or message us on WhatsApp."
+      );
+      return;
+    }
+
     setSubmitted(true);
   };
 
@@ -250,6 +282,13 @@ export default function QuoteForm() {
         </div>
       )}
 
+      {submitError && (
+        <div className="mt-6 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" />
+          <p>{submitError}</p>
+        </div>
+      )}
+
       <div className="mt-8 flex items-center justify-between">
         <button
           type="button"
@@ -273,10 +312,10 @@ export default function QuoteForm() {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={!canProceed()}
+            disabled={!canProceed() || submitting}
             className="inline-flex items-center justify-center rounded-sm bg-gold px-6 py-3 text-sm font-semibold uppercase tracking-wide text-ink hover:bg-gold-soft transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Submit Request
+            {submitting ? "Submitting…" : submitError ? "Try Again" : "Submit Request"}
           </button>
         )}
       </div>

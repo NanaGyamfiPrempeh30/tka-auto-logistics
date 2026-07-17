@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* TKA is a fixed brand look, not a light/dark toggle site. shadcn
+   components ship `dark:` classes for OS-preference dark mode; pinning
+   the variant to an unused `.dark` class keeps them inert instead of
+   shifting on viewers' OS dark-mode setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
