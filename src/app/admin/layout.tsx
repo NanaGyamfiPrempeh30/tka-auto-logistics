@@ -12,7 +12,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             TKA <span className="text-gold">Admin</span>
           </Link>
           <form action={signOut}>
-            <Button type="submit" variant="outline" size="sm">
+            <Button
+              type="submit"
+              variant="outline"
+              size="sm"
+              className="border-paper/40 bg-transparent text-paper hover:bg-paper/10 hover:text-paper"
+            >
               Sign out
             </Button>
           </form>
