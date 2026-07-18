@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatusSelect from "@/components/admin/status-select";
 
@@ -56,7 +57,12 @@ export default async function LeadDetailPage({
             Submitted {formatDateTime(lead.created_at)}
           </p>
         </div>
-        <StatusSelect leadId={lead.id} status={lead.status} />
+        <div className="flex items-center gap-3">
+          <Button asChild variant="outline">
+            <Link href={`/admin/orders/new?leadId=${lead.id}`}>Create order from this lead</Link>
+          </Button>
+          <StatusSelect leadId={lead.id} status={lead.status} />
+        </div>
       </div>
 
       <Card className="mt-6 max-w-xl">

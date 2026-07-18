@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { login, type LoginState } from "@/app/login/actions";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,9 +10,16 @@ import { Label } from "@/components/ui/label";
 export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const [state, formAction, pending] = useActionState<LoginState, FormData>(login, undefined);
 
+  // Picks up the session if this page was reached via a Supabase email
+  // confirmation link (tokens arrive in the URL) — createBrowserClient
+  // detects and persists it automatically on instantiation.
+  useEffect(() => {
+    createClient();
+  }, []);
+
   return (
     <form action={formAction} className="space-y-4">
-      <input type="hidden" name="redirectTo" value={redirectTo ?? "/admin"} />
+      <input type="hidden" name="redirectTo" value={redirectTo ?? ""} />
 
       <div className="space-y-1.5">
         <Label htmlFor="email">Email</Label>

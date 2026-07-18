@@ -1,16 +1,34 @@
 import Link from "next/link";
 import Container from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { signOut } from "./actions";
+import { signOut } from "@/app/actions";
+
+const navLinks = [
+  { href: "/admin", label: "Leads" },
+  { href: "/admin/orders", label: "Orders" },
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-paper-dim">
       <header className="border-b border-line bg-ink text-paper">
-        <Container className="flex h-16 items-center justify-between">
-          <Link href="/admin" className="font-heading text-lg font-semibold uppercase tracking-wide">
-            TKA <span className="text-gold">Admin</span>
-          </Link>
+        <Container className="flex h-16 items-center justify-between gap-6">
+          <div className="flex items-center gap-8">
+            <Link href="/admin" className="font-heading text-lg font-semibold uppercase tracking-wide">
+              TKA <span className="text-gold">Admin</span>
+            </Link>
+            <nav className="hidden sm:flex items-center gap-6">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium uppercase tracking-wide text-paper/80 hover:text-gold"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
           <form action={signOut}>
             <Button
               type="submit"

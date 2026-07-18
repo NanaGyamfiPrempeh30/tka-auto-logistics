@@ -8,36 +8,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import LoginForm from "@/components/auth/login-form";
+import RegisterForm from "@/components/auth/register-form";
 
 export const metadata: Metadata = {
-  title: "Sign In",
+  title: "Create Account",
   robots: { index: false, follow: false },
 };
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ redirectTo?: string }>;
-}) {
-  const { redirectTo } = await searchParams;
-
+export default function RegisterPage() {
   return (
     <section className="flex min-h-[70vh] items-center justify-center bg-paper-dim py-16">
       <Container className="max-w-sm">
         <Card>
           <CardHeader>
             <CardTitle className="font-heading uppercase tracking-wide text-ink">
-              Sign in
+              Create your account
             </CardTitle>
-            <CardDescription>Track your shipment or manage TKA leads.</CardDescription>
+            <CardDescription>Track your shipment from auction to your door.</CardDescription>
           </CardHeader>
           <CardContent>
-            <LoginForm redirectTo={redirectTo} />
+            <RegisterForm />
             <p className="mt-4 text-center text-sm text-ink/60">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="font-medium text-gold-deep">
-                Create one
+              Already have an account?{" "}
+              <Link href="/login" className="font-medium text-gold-deep">
+                Sign in
               </Link>
             </p>
           </CardContent>
